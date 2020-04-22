@@ -140,3 +140,22 @@ def betti_numbers(image, level):
     b_1 = b_0 - e_char
     return [b_0, b_1]
 
+def homology_labeling(image, level):
+    v = vertices(0.5, image)
+    e = edges(v)
+    skel_1 = skeleton_1(v, e)
+
+    new_image = np.full(image.shape, -1)
+    inter_image = np.ones(image.shape)
+
+    ccs = nx.connected_components(skel_1)
+
+    for x_cc in ccs:
+        coord1 = [i[0] for i in x_cc]
+        coord2 = [i[1] for i in x_cc]
+        inter_image[coord1, coord2] = 0
+        b1_x_cc = betti_numbers(inter_image, 0.5)[0] - 1
+        new_image[coord1, coord2] = b1_x_cc
+        inter_image[:, :] = 1
+    return new_image
+
