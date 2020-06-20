@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Computes the betti numbers and Euler characteristic
 # of the "dark regions" of an image.
 # To do: make as a sklearn transformer
@@ -20,7 +18,7 @@ class betti_numbers:
         into light=False (less than level) and dark=True (greater than level)
         A nonzero entry
         '''
-        vertices = image > level
+        vertices = (image > level).astype(np.int8)
         return vertices
 
     def make_edges(self, vertices):
@@ -29,7 +27,7 @@ class betti_numbers:
         dark
 
         Input
-        -----[path: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin]
+        -----
         vertices = numpy array of "vertices"
 
         Output
@@ -38,27 +36,31 @@ class betti_numbers:
 
         edges[x, y, k] indicates that there is a dark pixel at
         (x, y) and at (x, y) + direction[k], where:
-        direction[0] = up
-        direction[1] = right
-        direction[2] = down
-        direction[3] = left
+        direction[0] = right
+        direction[1] = up
+        direction[2] = left
+        direction[3] = down
         '''
 
-        # directions are [up, right, down, left]
-        directions = [[0, -1], [-1, 0], [0, 1], [1, 0]]
+        # directions are [left, down, right, up]
+        directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 
         list_of_edges = [vertices & shift(vertices, direction)
                          for direction in directions]
+
         edges = np.dstack(list_of_edges)
 
         return edges
 
     def make_faces(self, edges):
 
-        bottom_left_corner = edges[:, :, 0] & edges[:, :, 1]
-        top_right_corner = shift(edges[:, :, 2] & edges[:, :, 3], [-1, -1])
+        bottom_left_corner = edges[:, :, 1] & edges[:, :, 0]
+        top_right_corner = edges[:, :, 3] & edges[:, :, 2]
 
-        faces = bottom_left_corner & top_right_corner
+        print('bottom_left_corner', bottom_left_corner.sum())
+        print('top_right_corner', top_right_corner.sum())
+
+        faces = bottom_left_corner & shift(top_right_corner, [-1, -1])
         return faces
 
     def make_one_skeleton(self, vertices, edges):
@@ -69,12 +71,12 @@ class betti_numbers:
 
         one_skel.add_nodes_from(zip(*np.nonzero(vertices)))
 
-        hor_0 = zip(*np.nonzero(edges[:, :, 1]))
-        hor_1 = zip(*np.nonzero(shift(edges[:, :, 1], [-1, 0])))
+        hor_0 = zip(*np.nonzero(edges[:, :, 0]))
+        hor_1 = zip(*np.nonzero(edges[:, :, 2]))
         hor_edges = zip(hor_0, hor_1)
 
-        vert_0 = zip(*np.nonzero(edges[:, :, 0]))
-        vert_1 = zip(*np.nonzero(shift(edges[:, :, 0], [0, -1])))
+        vert_0 = zip(*np.nonzero(edges[:, :, 1]))
+        vert_1 = zip(*np.nonzero(edges[:, :, 3]))
         vert_edges = zip(vert_0, vert_1)
 
         one_skel.add_edges_from(hor_edges)
@@ -108,6 +110,19 @@ class betti_numbers:
         return betti_numbers
 
 
-b = betti_numbers()
-image = np.ones(shape=(10, 10))
-print(b.compute_betti_numbers(image, .5))
+def single_point_test():
+    # test for a single point
+    pass
+
+
+def horizontal_edge_test():
+    pass
+
+
+def vertical_edge_test():
+    pass
+
+
+def square_test():
+    # test for a single square
+    pass
