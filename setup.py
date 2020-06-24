@@ -18,7 +18,7 @@ URL = 'https://github.com/jmann277/homology_of_greyscale_images'
 EMAIL = 'jmann277@gmail.com'
 AUTHOR = 'Jeremy Mann'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1dev'
+VERSION = '0.1.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
