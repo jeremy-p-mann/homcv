@@ -13,7 +13,7 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'homcv'
-DESCRIPTION = 'Computes homological properties of imagess.'
+DESCRIPTION = 'Computes homotopical properties of images.'
 URL = 'https://github.com/jmann277/homology_of_greyscale_images'
 EMAIL = 'jmann277@gmail.com'
 AUTHOR = 'Jeremy Mann'
