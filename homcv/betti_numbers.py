@@ -8,121 +8,151 @@ from scipy.ndimage.interpolation import shift
 import networkx as nx
 
 
-class betti_numbers:
-    def __init__(self):
-        pass
+def _make_vertices(image, threshold=.5):
+    '''
+    Returns a 2 dimensional array indicating the presence of a pixel darker
+    than a specified threshold.
 
-    def make_vertices(self, image, level):
-        '''
-        Returns the subobject classifier of the partition of the image
-        into light=False (less than level) and dark=True (greater than level)
-        A nonzero entry
-        '''
-        vertices = (image > level).astype(np.int8)
-        return vertices
+    In other words, the subobject classifier of the partition of the image
+    into light=0 (less than level) and dark=1 (greater than level).
 
-    def make_edges(self, vertices):
-        '''
-        Creates an array recording whether there exists an adjacent
-        dark
+    Parameters
+    ----------
+    image : ndararay, shape (nx, ny)
+        2 dimensional array representing the image
+    threshold : float, optional, default to .5
+        Float indicating the lowest value considered "dark"
 
-        Input
-        -----
-        vertices = numpy array of "vertices"
+    Returns
+    -------
+    vertices : ndarray, shape (nx,  ny)
+        vertices[x, y] == 1 indicates that image[x, y] >= threshold
+        vertices[x, y] == 0 indicates that image[x, y] < threshold
 
-        Output
-        ------
-        edges = numpy array of (vertices.shape, 4).
-
-        edges[x, y, k] indicates that there is a dark pixel at
-        (x, y) and at (x, y) + direction[k], where:
-        direction[0] = right
-        direction[1] = up
-        direction[2] = left
-        direction[3] = down
-        '''
-
-        # directions are [left, down, right, up]
-        directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
-
-        list_of_edges = [vertices & shift(vertices, direction)
-                         for direction in directions]
-
-        edges = np.dstack(list_of_edges)
-
-        return edges
-
-    def make_faces(self, edges):
-
-        bottom_left_corner = edges[:, :, 1] & edges[:, :, 0]
-        top_right_corner = edges[:, :, 3] & edges[:, :, 2]
-
-        print('bottom_left_corner', bottom_left_corner.sum())
-        print('top_right_corner', top_right_corner.sum())
-
-        faces = bottom_left_corner & shift(top_right_corner, [-1, -1])
-        return faces
-
-    def make_one_skeleton(self, vertices, edges):
-        '''
-        Assembles edges and vertices into a networkx graph
-        '''
-        one_skel = nx.Graph()
-
-        one_skel.add_nodes_from(zip(*np.nonzero(vertices)))
-
-        hor_0 = zip(*np.nonzero(edges[:, :, 0]))
-        hor_1 = zip(*np.nonzero(edges[:, :, 2]))
-        hor_edges = zip(hor_0, hor_1)
-
-        vert_0 = zip(*np.nonzero(edges[:, :, 1]))
-        vert_1 = zip(*np.nonzero(edges[:, :, 3]))
-        vert_edges = zip(vert_0, vert_1)
-
-        one_skel.add_edges_from(hor_edges)
-        one_skel.add_edges_from(vert_edges)
-
-        return one_skel
-
-    def compute_euler_char(self, vertices, edges, faces):
-        # vertices - horizontal edges - vertical edges + faces
-        e_char = vertices.sum() - edges[:, :, [0, 1]].sum() + faces.sum()
-        return e_char
-
-    def compute_connected_components(self, one_skel):
-        b_0 = nx.number_connected_components(one_skel)
-        return b_0
-
-    def compute_betti_numbers(self, image, level):
-
-        vertices = self.make_vertices(image, level)
-        edges = self.make_edges(vertices)
-        faces = self.make_faces(edges)
-        one_skel = self.make_one_skeleton(vertices, edges)
-
-        e_char = self.compute_euler_char(vertices, edges, faces)
-
-        b_0 = self.compute_connected_components(one_skel)
-        b_1 = b_0 - e_char
-
-        betti_numbers = np.array([b_0, b_1], np.int8)
-
-        return betti_numbers
+    '''
+    assert image.ndim == 2, 'input must be two dimensional'
+    vertices = (image >= threshold).astype(np.int8)
+    return vertices
 
 
-def single_point_test():
-    # test for a single point
-    pass
+def _make_edges(vertices):
+    '''
+    Creates a 3 dimensional array recording whether there exists adjacent
+    vertices.
+
+    Parameters
+    ----------
+    vertices : ndarray, shape (nx, ny)
+
+    Returns
+    -------
+    edges : ndarray, shape (nx, ny, 4)
+        edges[x, y, k]  == 1 indicates that there is a dark pixel at
+        (x, y) and at (x, y) + v[k], where:
+        v[0] = right
+        v[1] = up
+        v[2] = left
+        v[3] = down
+
+        Note the directions start at 0 (viewed as a complex number),
+        and move counterclockwise by 90 degrees
+
+    '''
+    directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]  # [left, down, right, up]
+
+    list_of_edges = [vertices & shift(vertices, direction)
+                     for direction in directions]
+
+    edges = np.dstack(list_of_edges)
+    return edges
 
 
-def horizontal_edge_test():
-    pass
+def _make_faces(edges):
+    '''
+    Creates a 2 dimensional array indicating the presence of the
+    bottom left corner of four adjacent pixels forming a square.
+
+    Parameters
+    ----------
+    edges : ndarray, shape (nx, ny, 4)
+        Array representing the presence of adjacent dark pixels
+
+    Returns
+    -------
+    faces : ndarray, shape (nx, ny)
+        faces[x, y] == 1 indicates that there is dark pixel at
+        [x, y], [x, y]+right, [x, y]+up, and [x, y]+up+right
+
+    '''
+    bottom_left_corner = edges[:, :, 1] & edges[:, :, 0]
+    top_right_corner = edges[:, :, 3] & edges[:, :, 2]
+
+    faces = bottom_left_corner & shift(top_right_corner, [-1, -1])
+    return faces
 
 
-def vertical_edge_test():
-    pass
+def _make_one_skeleton(vertices, edges):
+    '''Assembles edges and vertices into a networkx graph'''
+    one_skel = nx.Graph()
+
+    one_skel.add_nodes_from(zip(*np.nonzero(vertices)))
+
+    hor_0 = zip(*np.nonzero(edges[:, :, 0]))
+    hor_1 = zip(*np.nonzero(edges[:, :, 2]))
+    hor_edges = zip(hor_0, hor_1)
+
+    vert_0 = zip(*np.nonzero(edges[:, :, 1]))
+    vert_1 = zip(*np.nonzero(edges[:, :, 3]))
+    vert_edges = zip(vert_0, vert_1)
+
+    one_skel.add_edges_from(hor_edges)
+    one_skel.add_edges_from(vert_edges)
+
+    return one_skel
 
 
-def square_test():
-    # test for a single square
-    pass
+def _compute_euler_char(vertices, edges, faces):
+    ''' Computes the Euler characteristic using the vertexs/edges/faces'''
+    # vertices - (right edges + up edges) + faces
+    euler_char = vertices.sum() - edges[:, :, [0, 1]].sum() + faces.sum()
+    return euler_char
+
+
+def _compute_connected_components(one_skel):
+    b_0 = nx.number_connected_components(one_skel)
+    return b_0
+
+
+def betti_numbers(image, threshold=.5):
+    '''
+    Computes the zeroeth and first Betti numbers of the "dark" region of a
+    greyscale image.
+
+    Note that the second Betti number must be zero.
+
+    Parameters
+    ----------
+    image: ndarray, shape (nx, ny)
+        Numpy array representing a greyscale image
+    threshold: float
+        Number specifying the "data"
+
+    Returns
+    -------
+    [betti_0, betti_1] : ndarray, shape (2,)
+        Zeroeth and first betti numbers of the regions of the image
+        greater than the specified threshold.
+
+    '''
+    vertices = _make_vertices(image, threshold)
+    edges = _make_edges(vertices)
+    faces = _make_faces(edges)
+    one_skel = _make_one_skeleton(vertices, edges)
+
+    euler_char = _compute_euler_char(vertices, edges, faces)
+
+    betti_0 = _compute_connected_components(one_skel)
+    betti_1 = betti_0 - euler_char
+
+    betti_numbers = np.array([betti_0, betti_1], np.int8)
+    return betti_numbers
