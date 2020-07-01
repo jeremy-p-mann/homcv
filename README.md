@@ -17,9 +17,7 @@ pip install homcv
 
 ```python
 >>> from homcv.betti_numbers import betti_numbers
->>> circle_image = mpimg.imread('circle.png')
->>> circle_greyscale_image = rgb2gray(circle_image)
->>> betti_numbers(circle_image) 
+>>> betti_numbers(circle_greyscale_image) 
 array([1, 0], dtype=int8)
 ```
 
