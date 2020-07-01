@@ -1,14 +1,19 @@
+HomCV: Homotopical Computer Vision
+==================================
 
-Welcome to HomCV's documentation!
-=================================
+HomCV is an open source Python library applying homotopy theoretic methods to computer vision.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-Betti Numbers
-=============
-.. automodule:: homcv.betti_numbers
-    :members:
+   readme.rst
+   betti_numbers
+   tutorials/tutorials_main_page
+
+.. include:: readme.rst
+   :start-line: 4
+
 
 
 Indices and tables
