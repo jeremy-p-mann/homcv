@@ -5,4 +5,3 @@ sys.path.insert(0, os.path.abspath(
 
 import homcv
 
-from homcv.betti_numbers import betti_numbers

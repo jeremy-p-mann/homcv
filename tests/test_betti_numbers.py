@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from .context import betti_numbers
-
+from .context import homcv
+from homcv import betti_numbers
 
 def test_disk_betti_numbers(disk):
     assert betti_numbers(disk, .5)[0] == 1, (
