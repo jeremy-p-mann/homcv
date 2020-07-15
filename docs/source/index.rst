@@ -1,7 +1,8 @@
 HomCV: Homotopical Computer Vision
 ==================================
 
-HomCV is an open source Python library applying homotopy theoretic methods to computer vision.
+HomCV is an open source Python library applying homotopy-theoretic
+methods to computer vision.
 
 .. toctree::
    :maxdepth: 2
