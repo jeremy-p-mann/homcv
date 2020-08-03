@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; HomCV 0.1.0 documentation</title>
+  <title>Tutorials &mdash; HomCV 0.1.0 documentation</title>
   
 
   
@@ -35,8 +35,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples of Betti Numbers" href="notebooks/betti_number_example.html" />
+    <link rel="prev" title="Betti Numbers" href="betti_numbers.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,10 +84,13 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="readme.html">HomCV: Homotopical Computer Vision</a></li>
 <li class="toctree-l1"><a class="reference internal" href="betti_numbers.html">Betti Numbers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/betti_number_example.html">Examples of Betti Numbers</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -132,12 +137,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Index</li>
+      <li>Tutorials</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/tutorials.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -149,55 +156,60 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
 
-<h1 id="index">Index</h1>
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
 
-<div class="genindex-jumpbox">
- <a href="#B"><strong>B</strong></a>
- | <a href="#H"><strong>H</strong></a>
- | <a href="#M"><strong>M</strong></a>
- 
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="tutorials">
+<h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
+<p>Homotopy theory and algebraic topology are notoriously difficult to
+access without a formal, specialized. However, the actual output of
+these constructions existed long before any formalism(s).</p>
+<p>Therefore, we recommend that those unfamiliar with these formalism
+concentrate on building an intuition for the input and output of these
+constructions.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Notebook Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/betti_number_example.html">Examples of Betti Numbers</a></li>
+</ul>
 </div>
-<h2 id="B">B</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="betti_numbers.html#homcv.betti_numbers.betti_numbers">betti_numbers() (in module homcv.betti_numbers)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    homcv.betti_numbers
-
-      <ul>
-        <li><a href="betti_numbers.html#module-homcv.betti_numbers">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="M">M</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    module
-
-      <ul>
-        <li><a href="betti_numbers.html#module-homcv.betti_numbers">homcv.betti_numbers</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="notebooks/betti_number_example.html" class="btn btn-neutral float-right" title="Examples of Betti Numbers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="betti_numbers.html" class="btn btn-neutral float-left" title="Betti Numbers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
